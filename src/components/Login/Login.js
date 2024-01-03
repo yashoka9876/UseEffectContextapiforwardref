@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Card from '../UI/Card/Card';
 import classes from './Login.module.css';
@@ -9,23 +9,36 @@ const Login = (props) => {
   const [emailIsValid, setEmailIsValid] = useState();
   const [enteredPassword, setEnteredPassword] = useState('');
   const [passwordIsValid, setPasswordIsValid] = useState();
+  const [enteredCollegeName,setEnteredCollegeName]=useState('');
+  const [collegeNameIsValid,setCollegeNameIsValid]=useState();
   const [formIsValid, setFormIsValid] = useState(false);
+
+
+  useEffect(()=>{
+    setFormIsValid(
+      enteredEmail.includes('@') && enteredPassword.trim().length > 6 && enteredCollegeName.trim().length > 3
+    );
+  },[enteredEmail,enteredPassword,enteredCollegeName])
 
   const emailChangeHandler = (event) => {
     setEnteredEmail(event.target.value);
 
-    setFormIsValid(
-      event.target.value.includes('@') && enteredPassword.trim().length > 6
-    );
+    // setFormIsValid(
+    //   event.target.value.includes('@') && enteredPassword.trim().length > 6
+    // );
   };
 
   const passwordChangeHandler = (event) => {
     setEnteredPassword(event.target.value);
 
-    setFormIsValid(
-      event.target.value.trim().length > 6 && enteredEmail.includes('@')
-    );
+    // setFormIsValid(
+    //   event.target.value.trim().length > 6 && enteredEmail.includes('@')
+    // );
   };
+
+  const collegeNameChangeHandler=(event)=>{
+    setEnteredCollegeName(event.target.value);
+  }
 
   const validateEmailHandler = () => {
     setEmailIsValid(enteredEmail.includes('@'));
@@ -35,9 +48,13 @@ const Login = (props) => {
     setPasswordIsValid(enteredPassword.trim().length > 6);
   };
 
+  const validateCollegeNameHandler= ()=>{
+    setCollegeNameIsValid(enteredCollegeName.trim().length > 3)
+  }
+
   const submitHandler = (event) => {
     event.preventDefault();
-    props.onLogin(enteredEmail, enteredPassword);
+    props.onLogin(enteredEmail, enteredPassword,enteredCollegeName);
   };
 
   return (
@@ -71,6 +88,22 @@ const Login = (props) => {
             onBlur={validatePasswordHandler}
           />
         </div>
+
+        <div
+          className={`${classes.control} ${
+            collegeNameIsValid === false ? classes.invalid : ''
+          }`}
+        >
+          <label htmlFor="collegeName">Password</label>
+          <input
+            type="text"
+            id="collegeName"
+            value={enteredCollegeName}
+            onChange={collegeNameChangeHandler}
+            onBlur={validateCollegeNameHandler}
+          />
+        </div>
+       
         <div className={classes.actions}>
           <Button type="submit" className={classes.btn} disabled={!formIsValid}>
             Login
